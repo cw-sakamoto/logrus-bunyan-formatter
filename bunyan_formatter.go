@@ -5,17 +5,18 @@ import (
 	"fmt"
 	"github.com/Sirupsen/logrus"
 	"os"
+	"time"
 )
 
 // See https://github.com/trentm/node-bunyan/blob/cbfaa9a7bd86c658dbb8333c894191d23b65be33/bin/bunyan#L62-L68
 var logrusLevelToBunyan map[string]int = map[string]int{
 	// "Trace" does not exist in logrus
 	//"trace": 10,
-	"debug": 20,
-	"info":  30,
-	"warning":  40,
-	"error": 50,
-	"fatal": 60,
+	"debug":   20,
+	"info":    30,
+	"warning": 40,
+	"error":   50,
+	"fatal":   60,
 	// "PANIC" does not exist in bunyan. It is logged as the "LVLpanic" level
 }
 
@@ -27,16 +28,16 @@ var (
 type Formatter struct {
 	// TimestampFormat sets the format used for marshaling timestamps.
 	TimestampFormat string
-	Name string
+	Name            string
 }
 
 func init() {
-     var err error
+	var err error
 
 	pid = os.Getpid()
 	hostname, err = os.Hostname()
 	if err != nil {
-	   hostname = "<hostname n/a>"
+		hostname = "<hostname n/a>"
 	}
 }
 
@@ -56,7 +57,7 @@ func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 
 	timestampFormat := f.TimestampFormat
 	if timestampFormat == "" {
-		timestampFormat = logrus.DefaultTimestampFormat
+		timestampFormat = time.RFC3339
 	}
 
 	data["time"] = entry.Time.Format(timestampFormat)
